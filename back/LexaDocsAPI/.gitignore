@@ -1,2 +1,2 @@
 # Exclude fake data
-./lexadocsapi/dataEnv
+/lexadocsapi/dataEnv
