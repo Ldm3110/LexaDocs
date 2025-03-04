@@ -1,2 +1,4 @@
 # Exclude fake data
 /lexadocsapi/dataEnv
+
+__pycache__
