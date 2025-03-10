@@ -14,24 +14,22 @@ app = FastAPI(lifespan=on_startup)
 
 # CORS
 origins = [
-    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
     "http://127.0.0.1:5173",
+    "http://localhost:5173",
 ]
 
 # Ajout du middleware CORS à l'application
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Autorise les origines définies
-    allow_credentials=True,  # Autorise les cookies, etc.
-    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, etc.)
-    allow_headers=["*"],  # Autorise tous les en-têtes
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # routers
 app.include_router(authentication.router)
 app.include_router(firm.router)
 app.include_router(customers.router)
-
-
-if __name__ == "__main__":
-    on_startup()
