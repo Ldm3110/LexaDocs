@@ -7,8 +7,8 @@ import phonenumbers
 
 
 class GenderEnum(str, Enum):
-    MALE = "Homme"
-    FEMALE = "Femme"
+    MALE = "Monsieur"
+    FEMALE = "Madame"
 
 
 class User(SQLModel, table=False):
@@ -31,3 +31,4 @@ class User(SQLModel, table=False):
             )
         except phonenumbers.NumberParseException:
             raise ValueError("Phone number format not valid")
+

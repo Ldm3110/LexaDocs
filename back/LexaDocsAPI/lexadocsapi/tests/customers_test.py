@@ -14,7 +14,7 @@ def fake_customer(session: Session):
     hashed_password = hash_password("S3cret1234")
     fake_customer = Customers(
         name="Toto",
-        gender="Homme",
+        gender="Monsieur",
         address="123 Fake Street, Testville, TX 99999",
         email="toto@tata.org",
         matrimonial_status="Célibataire",
@@ -45,7 +45,6 @@ def get_access_token(client: TestClient, test_user: Customers) -> str:
     print("=========================")
 
     assert response.status_code == status.HTTP_200_OK
-    return response.json()["access_token"]
 
 
 class TestCustomers:
@@ -66,7 +65,7 @@ class TestCustomers:
             "name": "John Doe",
             "address": "123 Fake Street, Testville, TX 99999",
             "phone_number": "+33102030405",
-            "gender": "Homme",
+            "gender": "Monsieur",
             "email": "johndoe@example.com",
             "matrimonial_status": "Célibataire",
             "nb_childs": 0,
@@ -91,7 +90,7 @@ class TestCustomers:
             "name": "John Doe",
             "address": "123 Fake Street, Testville, TX 99999",
             "phone_number": "Not a phone number",
-            "gender": "Homme",
+            "gender": "Monsieur",
             "email": "johndoe@example.com",
             "matrimonial_status": "Célibataire",
             "nb_childs": 0,
@@ -113,7 +112,7 @@ class TestCustomers:
             "name": "John Doe",
             "address": "123 Fake Street, Testville, TX 99999",
             "phone_number": "+33102030405",
-            "gender": "Homme",
+            "gender": "Monsieur",
             "email": "johndoe@example.com",
             "matrimonial_status": "Bad Status",
             "nb_childs": 0,

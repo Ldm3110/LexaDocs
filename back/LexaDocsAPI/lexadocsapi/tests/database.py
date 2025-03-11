@@ -9,7 +9,6 @@ from lexadocsapi.database import get_session
 
 from lexadocsapi.dataEnv.data_env import DB_NAME_TEST, DB_PASS, DB_USER
 
-
 def setup_database():
     db_url = f"mysql+mysqldb://{DB_USER}:{DB_PASS}@localhost/{DB_NAME_TEST}"
 
@@ -43,3 +42,4 @@ def client_fixture(session: Session):
     client = TestClient(app=app)
     yield client
     app.dependency_overrides.clear()
+
