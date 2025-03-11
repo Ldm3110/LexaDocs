@@ -1,7 +1,9 @@
 export function Cases() {
-    return <>
-        <h2>Cases</h2>
+  return (
+    <>
+      <h2>Cases</h2>
     </>
+  );
 }
 
-export default Cases
+export default Cases;

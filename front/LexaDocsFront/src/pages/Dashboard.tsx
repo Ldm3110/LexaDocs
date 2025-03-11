@@ -1,8 +1,10 @@
-import { Navbar } from "../components/staticComponents/Navbar";
-import { Sidebar } from "../components/staticComponents/Sidebar"
-
+// import { useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 export function Dashboard() {
+  const { checkAuth } = useAuth();
+
+  checkAuth();
 
   return (
     <>
@@ -11,4 +13,4 @@ export function Dashboard() {
   );
 }
 
-export default Dashboard
+export default Dashboard;
