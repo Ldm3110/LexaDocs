@@ -1,50 +1,9 @@
-import pytest
-
-from sqlmodel import Session
 from fastapi.testclient import TestClient
 from starlette import status
 
 from lexadocsapi.models.users.customers import Customers
 from lexadocsapi.tests.database import session_fixture, client_fixture
-from lexadocsapi.auth_config import hash_password
-
-
-@pytest.fixture
-def fake_customer(session: Session):
-    hashed_password = hash_password("S3cret1234")
-    fake_customer = Customers(
-        name="Toto",
-        gender="Monsieur",
-        address="123 Fake Street, Testville, TX 99999",
-        email="toto@tata.org",
-        matrimonial_status="Célibataire",
-        nb_childs=0,
-        password=hashed_password,
-    )
-
-    session.add(fake_customer)
-    session.commit()
-    session.refresh(fake_customer)
-    print("=========================")
-    print(fake_customer.password)
-    print("=========================")
-
-    return fake_customer
-
-
-def get_access_token(client: TestClient, test_user: Customers) -> str:
-    response = client.post(
-        "/authentication/customers",
-        data={
-            "username": test_user.email,
-            "password": "S3cret1234",
-        },
-    )
-    print("=========================")
-    print(response.json())
-    print("=========================")
-
-    assert response.status_code == status.HTTP_200_OK
+from lexadocsapi.tests.fixtures import fake_customer, get_access_token
 
 
 class TestCustomers:
