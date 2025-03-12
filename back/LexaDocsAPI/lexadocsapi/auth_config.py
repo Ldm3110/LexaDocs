@@ -44,7 +44,7 @@ def get_current_token(request: Request):
     """
     token = request.cookies.get("access_token")
     if not token:
-        raise HTTPException(status_code=401, detail="User not authenticated")
+        raise HTTPException(status_code=401, detail="Token does not exist")
 
     return token
 
@@ -63,18 +63,9 @@ def get_current_user(token: str = Depends(get_current_token)):
         if not email:
             raise HTTPException(status_code=401, detail="User not authenticated")
         if exp and datetime.now(timezone.utc) > exp_datetime:
-            return {
-                "error": "Token expired"
-            }
-            # return Response(
-            #     status_code=status.HTTP_401_UNAUTHORIZED,
-            #     content="Toen expired"
-            # )
-
+            return {"error": "Token expired"}
         return {"user": email}
     except jwt.ExpiredSignatureError:
-        return {
-            "error": "Token expired"
-        }
+        return {"error": "Token expired"}
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")

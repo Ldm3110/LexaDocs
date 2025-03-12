@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from lexadocsapi.utils.utils import auth_validation
 from starlette import status
 from sqlmodel import Session, select
 
@@ -26,17 +27,8 @@ def http_exception_401(message: str):
 
 
 @router.get("/me", status_code=status.HTTP_200_OK)
-async def me(result: dict = Depends(get_current_user)):
-    for type, value in result.items():
-        if type == "error":
-            response = Response(
-                status_code=status.HTTP_401_UNAUTHORIZED, 
-                content=value
-            )
-            response.delete_cookie("access_token")
-            return response
-        elif type == "user":
-            return JSONResponse(content={"user": value})
+async def me(result: dict = Depends(auth_validation)):
+    return result
 
 
 @router.post("/authentication/customers", status_code=status.HTTP_200_OK)
@@ -48,7 +40,7 @@ async def login_customers(
         select(Customers).where(Customers.email == form_data.username)
     ).first()
     if not customer:
-        http_exception_401(message="customer does not exist in db")
+        http_exception_401(message="Bad credentials")
 
     password_verification = check_password(
         hashed_password=customer.password, plain_password=form_data.password
@@ -73,6 +65,7 @@ async def login_customers(
     )
 
     return response
+
 
 @router.post("/logout", status_code=status.HTTP_200_OK)
 async def logout(session: Session = Depends(get_session)):
