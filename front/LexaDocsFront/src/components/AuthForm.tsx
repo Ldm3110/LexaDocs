@@ -1,78 +1,84 @@
-import { useState, useRef, useEffect } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
+import { login, useAuthStore, AuthStatus } from "../hooks/useAuthTest";
 
-import { Input } from "./Input";
-import { useAuth, AuthStatus } from "../hooks/useAuth";
+interface RegisterForm {
+  username: String;
+  password: String;
+}
 
-type AuthFormType = {
+type TestAuthType = {
   type: string;
 };
 
-export function AuthForm({ type }: AuthFormType) {
-  const typeLabel: string = type === "staff" ? "Nom d'utilisateur" : "Email";
-  const [errorMessage, setErrorMessage] = useState<string>("");
+export function AuthForm({ type }: TestAuthType) {
   const navigate: NavigateFunction = useNavigate();
+  const status = useAuthStore((state) => state.status);
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterForm>();
 
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const [submitButtonEnable, setButtonSubmitEnable] = useState(false);
-
-  const { status, login } = useAuth();
-
-  useEffect(() => {
-    if (status === AuthStatus.AUTHENTICATED) {
-      navigate("/dashboard");
-    } else if (status === AuthStatus.ERROR_CREDENTIALS) {
-      setErrorMessage("Vos identifiants sont erronés ! Veuillez réessayer");
-    }
-  }, [status]);
-
-  var username: string = "";
-  var password: string = "";
-  const enableButton = (): void => {
-    username = usernameRef.current?.value?.trim();
-    password = passwordRef.current?.value?.trim();
-    setButtonSubmitEnable(!!username && !!password);
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit: SubmitHandler<RegisterForm> = (data) => {
     const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
+    formData.append("username", data.username);
+    formData.append("password", data.password);
     login(formData, type);
   };
 
-  return (
-    <>
-      <form className="d-flex flex-column gap-2" onSubmit={handleSubmit}>
-        <Input
-          label={typeLabel}
-          type="text"
-          inputRef={usernameRef}
-          onInput={enableButton}
-        />
-        <Input
-          label={"Mot de passe"}
-          type="password"
-          inputRef={passwordRef}
-          onInput={enableButton}
-        />
+  useEffect(() => {
+    console.log(status);
+    if (status === AuthStatus.AUTHENTICATED) {
+      navigate("/dashboard");
+    } else if (status === AuthStatus.ERROR_CREDENTIALS) {
+      setError("root", { message: "Error Credentials !" });
+    }
+  }, [status]);
 
-        {errorMessage && (
-          <div className="text-danger text-center fst-italic mt-2">
-            <strong>{errorMessage}</strong>
+  return (
+    <form
+      className="d-flex flex-column gap-2"
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <div className="text-center">
+        <label className="form-label text-center">
+          {type == "staff" ? "username" : "email"}
+        </label>
+        <input
+          className="form-control text-center"
+          {...register("username", { required: "Username is required" })}
+        />
+        {errors.username && (
+          <div className="text-danger fst-italic mt-2">
+            <strong>{errors.username.message}</strong>
           </div>
         )}
+      </div>
+      <div className="text-center">
+        <label className="form-label text-center">Password</label>
+        <input
+          className="form-control text-center"
+          type="password"
+          {...register("password", { required: "Password is required" })}
+        />
+        {errors.password && (
+          <div className="text-danger fst-italic mt-2">
+            <strong>{errors.password.message}</strong>
+          </div>
+        )}
+      </div>
 
-        <button
-          type="submit"
-          className="mt-5 btn btn-success"
-          disabled={!submitButtonEnable}
-        >
-          Se connecter
-        </button>
-      </form>
-    </>
+      <input className="mt-5 btn btn-success" type="submit" />
+      {errors.root && (
+        <div className="text-danger fst-italic mt-2">
+          <strong>{errors.root.message}</strong>
+        </div>
+      )}
+    </form>
   );
 }
+
+export default AuthForm;
