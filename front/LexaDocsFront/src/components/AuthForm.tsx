@@ -1,7 +1,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { login, useAuthStore, AuthStatus } from "../hooks/useAuthTest";
+import { login, useAuthStore, AuthStatus } from "../hooks/useAuth";
 
 interface RegisterForm {
   username: String;
@@ -30,7 +30,6 @@ export function AuthForm({ type }: TestAuthType) {
   };
 
   useEffect(() => {
-    console.log(status);
     if (status === AuthStatus.AUTHENTICATED) {
       navigate("/dashboard");
     } else if (status === AuthStatus.ERROR_CREDENTIALS) {
