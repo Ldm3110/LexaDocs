@@ -1,10 +1,18 @@
-// import { useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useEffect } from "react";
+import { AuthStatus, isAuth, useAuthStore } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export function Dashboard() {
-  const { checkAuth } = useAuth();
+  const status = useAuthStore((state) => state.status);
+  const navigate = useNavigate();
 
-  checkAuth();
+  useEffect(() => {
+    if (status === AuthStatus.UNKNOW) {
+      navigate("/");
+    }
+  }, [status]);
+
+  isAuth();
 
   return (
     <>
