@@ -1,7 +1,10 @@
+import { isAuth } from "../hooks/useAuth";
+
 export function Cases() {
+  isAuth();
   return (
     <>
-      <h2>Cases</h2>
+      <h2 className="text-center">Cases</h2>
     </>
   );
 }

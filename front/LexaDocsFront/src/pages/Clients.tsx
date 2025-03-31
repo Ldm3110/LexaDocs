@@ -1,13 +1,7 @@
-// import { useNavigate } from "react-router-dom";
-
-import { useAuth } from "../hooks/useAuth";
-// import { useEffect } from "react";
+import { isAuth } from "../hooks/useAuth";
 
 export function Clients() {
-  const { checkAuth } = useAuth();
-
-  checkAuth();
-
+  isAuth();
   return (
     <>
       <h2 className="text-center">Clients</h2>
