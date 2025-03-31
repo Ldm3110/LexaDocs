@@ -1,12 +1,12 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { logout, useAuthStore } from "../../hooks/useAuth";
 
 const styleLogo = { width: "200px", height: "auto", cursor: "pointer" };
-const styleDisconnect = { cursor: "pointer" };
+const stylePointer = { cursor: "pointer" };
 
 export function Navbar() {
-  const { logout } = useAuth();
   const navigate: NavigateFunction = useNavigate();
+  const user = useAuthStore((state) => state.user);
 
   const disconnect = () => {
     localStorage.clear();
@@ -14,8 +14,8 @@ export function Navbar() {
     navigate("/");
   };
 
-  const returnDashboard = () => {
-    navigate("/dashboard");
+  const myProfile = () => {
+    navigate("/myprofile");
   };
 
   return (
@@ -25,10 +25,10 @@ export function Navbar() {
     >
       <img
         className="ms-3"
-        src="/logo/LEGALL Avocat v2.svg"
+        src="/logo/lexadoc.svg"
         alt="LEGALL-logo"
         style={styleLogo}
-        onClick={returnDashboard}
+        onClick={() => navigate("/dashboard")}
       />
       <div className="dropdown me-3">
         <button
@@ -37,22 +37,16 @@ export function Navbar() {
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          {localStorage.getItem("name")}
+          {user.name}
         </button>
         <ul className="dropdown-menu dropdown-menu-end">
           <li>
-            <a className="dropdown-item" href="#">
-              Action
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Another action
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Something else here
+            <a
+              className="dropdown-item"
+              onClick={myProfile}
+              style={stylePointer}
+            >
+              Mon Profil
             </a>
           </li>
           <li>
@@ -62,7 +56,7 @@ export function Navbar() {
             <a
               className="dropdown-item"
               onClick={disconnect}
-              style={styleDisconnect}
+              style={stylePointer}
             >
               Se déconnecter
             </a>
