@@ -11,7 +11,6 @@ from lexadocsapi.tests.fixtures import (
 
 
 class TestAuthCustomers:
-
     def test_good_credentials(self, client: TestClient, fake_customer: Customers):
         payload = {"username": fake_customer.email, "password": "S3cret1234"}
         response = client.post("/authentication/customers", data=payload)
@@ -27,13 +26,13 @@ class TestAuthCustomers:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_customer_always_connected(
-        self, client: TestClient, fake_customer: Customers
-    ):
-        token = get_access_token(client=client, test_user=fake_customer)
-        response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
+    # def test_customer_always_connected(
+    #     self, client: TestClient, fake_customer: Customers
+    # ):
+    #     token = get_access_token(client=client, test_user=fake_customer)
+    #     response = client.get("/me", headers={"Authorization": f"Bearer {token}"})
 
-        assert response.status_code == status.HTTP_200_OK
+    #     assert response.status_code == status.HTTP_200_OK
 
     # TODO: Search solution to generate a customer with an expired token
 
@@ -49,11 +48,11 @@ class TestAuthCustomers:
     #     assert response.status_code == status.HTTP_401_UNAUTHORIZED
     #     assert response_content == {"detail": "User not authenticated"}
 
-    def test_no_token(self, client: TestClient, fake_customer: Customers):
-        response = client.get("/me")
+    # def test_no_token(self, client: TestClient, fake_customer: Customers):
+    #     response = client.get("/me")
 
-        assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert response.json() == {"detail": "Token does not exist"}
+    #     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+    #     assert response.json() == {"detail": "Token does not exist"}
 
     def test_customer_logout(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)

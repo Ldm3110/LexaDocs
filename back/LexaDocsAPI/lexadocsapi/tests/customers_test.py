@@ -7,7 +7,6 @@ from lexadocsapi.tests.fixtures import fake_customer, get_access_token
 
 
 class TestCustomers:
-
     def test_get_all_customers(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)
         response = client.get(

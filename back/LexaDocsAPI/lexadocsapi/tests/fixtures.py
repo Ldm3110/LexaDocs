@@ -31,7 +31,7 @@ def fake_customer(session: Session):
     return fake_customer
 
 
-def get_access_token(client: TestClient, test_user: Customers) -> str:
+def get_access_token(client: TestClient, test_user: Customers):
     response = client.post(
         "/authentication/customers",
         data={
