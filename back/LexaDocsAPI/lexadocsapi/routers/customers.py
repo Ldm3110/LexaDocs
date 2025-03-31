@@ -2,6 +2,7 @@ import secrets
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from lexadocsapi.utils.errors.error_handler import ErrorHandler
 from sqlmodel import Session, select
 from starlette import status
 
@@ -19,7 +20,6 @@ async def create_customer(
     authentication: Annotated[str, Depends(oauth2_scheme)],
     session: Session = Depends(get_session),
 ):
-
     try:
         # hashed_password = hash_password(secrets.token_urlsafe(12))
         hashed_password = hash_password("S3cret1234")
@@ -31,7 +31,7 @@ async def create_customer(
         session.refresh(customer_data)
         return customer_data
     except Exception as e:
-        raise HTTPException(status_code=422, detail=f"Error: {e} ")
+        ErrorHandler(status_code=422, message=f"Error : {e}")
 
 
 @router.get("/get_all", response_model=list[Customers], status_code=status.HTTP_200_OK)

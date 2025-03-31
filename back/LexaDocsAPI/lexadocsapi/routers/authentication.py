@@ -4,6 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from lexadocsapi.utils.errors.error_handler import ErrorHandler
 from lexadocsapi.utils.utils import auth_validation
 from starlette import status
 from sqlmodel import Session, select
@@ -19,21 +20,13 @@ from lexadocsapi.auth_config import check_password
 router = APIRouter(prefix="", tags=["auth"])
 
 
-def http_exception_401(message: str):
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        headers={"WWW-Authenticate": "Bearer"},
-        detail=message,
-    )
-
-
 def check_authentication(user, password, role):
     print(user)
     password_verification = check_password(
         hashed_password=user.password, plain_password=password
     )
     if not password_verification:
-        http_exception_401(message="Bad password")
+        ErrorHandler(status_code=401, message="Bad password")
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -68,7 +61,7 @@ async def login_staff(
         select(Staff).where(Staff.username == form_data.username)
     ).first()
     if not staff:
-        http_exception_401(message="User does not exist")
+        ErrorHandler(status_code=401, message="User does not exist")
 
     response = check_authentication(
         user=staff, password=form_data.password, role=staff.role
@@ -86,7 +79,7 @@ async def login_customers(
         select(Customers).where(Customers.email == form_data.username)
     ).first()
     if not customer:
-        http_exception_401(message="Bad credentials")
+        ErrorHandler(status_code=401, message="Bad credentials")
 
     response = check_authentication(
         user=customer, password=form_data.password, role="customer"

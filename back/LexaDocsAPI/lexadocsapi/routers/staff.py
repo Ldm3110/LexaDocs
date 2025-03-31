@@ -8,16 +8,9 @@ from lexadocsapi.auth_config import oauth2_scheme
 
 from lexadocsapi.models.users.staff import Staff, StaffCreation, StaffResponse
 from lexadocsapi.auth_config import hash_password
+from lexadocsapi.utils.errors.error_handler import ErrorHandler
 
 router = APIRouter(prefix="/staff", tags=["staff"])
-
-
-def http_exception_401(message: str):
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        headers={"WWW-Authenticate": "Bearer"},
-        detail=message,
-    )
 
 
 @router.post(
@@ -38,7 +31,7 @@ async def create_admin_profile(
         session.refresh(data_validated)
         return data_validated
     except Exception as e:
-        raise HTTPException(status_code=422, detail={f"Error : {e}"})
+        ErrorHandler(status_code=422, message=f"impossible to create -- {e}")
 
 
 @router.delete("/remove_staff", status_code=status.HTTP_204_NO_CONTENT)
@@ -50,7 +43,7 @@ async def remove_staff(
     staff = session.exec(select(Staff).where(Staff.id == int(id)))
 
     if not staff:
-        http_exception_401(message="User does not exist in database")
+        ErrorHandler(status_code=401, message="User does not exist in database")
 
     session.delete(staff)
     session.commit()
