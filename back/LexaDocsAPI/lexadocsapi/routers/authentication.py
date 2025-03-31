@@ -10,6 +10,7 @@ from sqlmodel import Session, select
 
 from lexadocsapi.dataEnv.data_env import ACCESS_TOKEN_EXPIRE_MINUTES
 from lexadocsapi.models.users.customers import Customers
+from lexadocsapi.models.users.staff import Staff
 from lexadocsapi.auth_config import create_access_token, get_current_user
 from lexadocsapi.database import get_session
 from lexadocsapi.auth_config import check_password
@@ -26,9 +27,54 @@ def http_exception_401(message: str):
     )
 
 
-@router.get("/me", status_code=status.HTTP_200_OK)
-async def me(result: dict = Depends(auth_validation)):
-    return result
+def check_authentication(user, password, role):
+    print(user)
+    password_verification = check_password(
+        hashed_password=user.password, plain_password=password
+    )
+    if not password_verification:
+        http_exception_401(message="Bad password")
+
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email}, expires_delta=access_token_expires
+    )
+    response = JSONResponse(
+        content={"customer_data": {"id": user.id, "name": user.name, "role": role}}
+    )
+
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=False,
+        samesite="lax",
+        secure=False,
+    )
+
+    return response
+
+
+# @router.get("/me", status_code=status.HTTP_200_OK)
+# async def me(result: dict = Depends(auth_validation)):
+#     return result
+
+
+@router.post("/authentication/staff", status_code=status.HTTP_200_OK)
+async def login_staff(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Session = Depends(get_session),
+):
+    staff = session.exec(
+        select(Staff).where(Staff.username == form_data.username)
+    ).first()
+    if not staff:
+        http_exception_401(message="User does not exist")
+
+    response = check_authentication(
+        user=staff, password=form_data.password, role=staff.role
+    )
+
+    return response
 
 
 @router.post("/authentication/customers", status_code=status.HTTP_200_OK)
@@ -42,26 +88,8 @@ async def login_customers(
     if not customer:
         http_exception_401(message="Bad credentials")
 
-    password_verification = check_password(
-        hashed_password=customer.password, plain_password=form_data.password
-    )
-    if not password_verification:
-        http_exception_401(message="Bad password")
-
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": customer.email}, expires_delta=access_token_expires
-    )
-    response = JSONResponse(
-        content={"customer_data": {"name": customer.name, "role": "customer"}}
-    )
-
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        samesite="Lax",
-        secure=False,
+    response = check_authentication(
+        user=customer, password=form_data.password, role="customer"
     )
 
     return response
