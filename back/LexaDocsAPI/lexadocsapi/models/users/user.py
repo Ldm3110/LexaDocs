@@ -12,7 +12,6 @@ class GenderEnum(str, Enum):
 
 
 class User(SQLModel, table=False):
-    gender: GenderEnum = Field(sa_column=Column(saEnum(GenderEnum), name="gender_enum"))
     name: str = Field(index=True)
     address: str
     phone_number: str | None = Field(default=None)
@@ -31,4 +30,3 @@ class User(SQLModel, table=False):
             )
         except phonenumbers.NumberParseException:
             raise ValueError("Phone number format not valid")
-
