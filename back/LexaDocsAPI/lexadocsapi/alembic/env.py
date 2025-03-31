@@ -8,7 +8,9 @@ from sqlmodel import SQLModel
 from alembic import context
 
 # model import
-from models import Firm, Customers
+from models.firm import Firm
+from models.users.customers import Customers
+from models.users.staff import Staff
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
