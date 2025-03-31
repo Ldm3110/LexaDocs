@@ -1,24 +1,40 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet } from "react-router-dom";
 
 import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
+import StaffSidebar from "./StaffSidebar";
+// import { useAuth } from '../../hooks/useAuth';
+import AdminSidebar from "./AdminSidebar";
+import CustomerSidebar from "./CustomerSidebar";
+import { createContext } from "react";
+import { useAuthStore } from "../../hooks/useAuth";
+
+const ThemeContext = createContext(null);
 
 export function Layout() {
+  // const { role } = useAuth()
+  const role = useAuthStore((state) => state.user.role);
 
-    return (
-        <div className="flex flex-col h-screen">
-            <Navbar />
-            <div className="d-flex flex-row">
-                <div className="w-64">
-                    <Sidebar />
-                </div>
-                <main className="mt-3 ms-3">
-                    <Outlet />
-                </main>
-
-            </div>
+  return (
+    <ThemeContext.Provider value={role}>
+      <div className="flex flex-col h-screen">
+        <Navbar />
+        <div className="d-flex flex-row">
+          <div className="w-64">
+            {role === "staff" ? (
+              <StaffSidebar />
+            ) : role === "customer" ? (
+              <CustomerSidebar />
+            ) : (
+              <AdminSidebar />
+            )}
+          </div>
+          <main className="mt-3 ms-3">
+            <Outlet />
+          </main>
         </div>
-    );
-};
+      </div>
+    </ThemeContext.Provider>
+  );
+}
 
-export default Layout
+export default Layout;
