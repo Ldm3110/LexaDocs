@@ -27,12 +27,18 @@ export const login = async (formData: FormData, type: string) => {
   } else if (type === "staff") {
     route = "authentication/staff";
   }
-  const response = await api.post(route, formData);
-  const { id, name, role } = response.data.customer_data;
-  useAuthStore.setState({
-    user: { id, name, role },
-    status: AuthStatus.AUTHENTICATED,
-  });
+  try {
+    const response = await api.post(route, formData);
+    const { id, name, role } = response.data.customer_data;
+    useAuthStore.setState({
+      user: { id, name, role },
+      status: AuthStatus.AUTHENTICATED,
+    });
+  } catch (e) {
+    useAuthStore.setState({
+      status: AuthStatus.ERROR_CREDENTIALS,
+    });
+  }
 };
 
 export const logout = async () => {
