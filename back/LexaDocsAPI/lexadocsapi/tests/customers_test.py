@@ -7,6 +7,16 @@ from lexadocsapi.tests.fixtures import fake_customer, get_access_token
 
 
 class TestCustomers:
+    payload = {
+        "name": "John Doe",
+        "address": "123 Fake Street, Testville, TX 99999",
+        "phone_number": "+33102030405",
+        "gender": "Monsieur",
+        "email": "johndoe@example.com",
+        "matrimonial_status": "Célibataire",
+        "nb_childs": 0,
+    }
+
     def test_get_all_customers(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)
         response = client.get(
@@ -19,20 +29,11 @@ class TestCustomers:
 
     def test_create_customer(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)
-        payload = {
-            "name": "John Doe",
-            "address": "123 Fake Street, Testville, TX 99999",
-            "phone_number": "+33102030405",
-            "gender": "Monsieur",
-            "email": "johndoe@example.com",
-            "matrimonial_status": "Célibataire",
-            "nb_childs": 0,
-        }
 
         response = client.post(
             "/customers/create",
             headers={"Authorization": f"Bearer {token}"},
-            json=payload,
+            json=self.payload,
         )
 
         data = response.json()
@@ -44,20 +45,13 @@ class TestCustomers:
 
     def test_bad_phone_number(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)
-        payload = {
-            "name": "John Doe",
-            "address": "123 Fake Street, Testville, TX 99999",
-            "phone_number": "Not a phone number",
-            "gender": "Monsieur",
-            "email": "johndoe@example.com",
-            "matrimonial_status": "Célibataire",
-            "nb_childs": 0,
-        }
+
+        test_payload = self.payload.update({"phone_number": "Not a phone number"})
 
         response = client.post(
             "/customers/create",
             headers={"Authorization": f"Bearer {token}"},
-            json=payload,
+            json=test_payload,
         )
 
         data = response.json()
@@ -66,20 +60,13 @@ class TestCustomers:
 
     def test_bad_matrimonial_status(self, client: TestClient, fake_customer: Customers):
         token = get_access_token(client=client, test_user=fake_customer)
-        payload = payload = {
-            "name": "John Doe",
-            "address": "123 Fake Street, Testville, TX 99999",
-            "phone_number": "+33102030405",
-            "gender": "Monsieur",
-            "email": "johndoe@example.com",
-            "matrimonial_status": "Bad Status",
-            "nb_childs": 0,
-        }
+
+        test_payload = self.payload.update({"matrimonial_status": "Bad Status"})
 
         response = client.post(
             "customers/create",
             headers={"Authorization": f"Bearer {token}"},
-            json=payload,
+            json=test_payload,
         )
 
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
