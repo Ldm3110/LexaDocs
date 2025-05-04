@@ -18,7 +18,7 @@ export function Layout() {
     <ThemeContext.Provider value={role}>
       <div className="flex flex-col h-screen">
         <Navbar />
-        <div className="d-flex flex-row">
+        <div className="flex flex-row">
           <div className="w-64">
             {role === "staff" ? (
               <StaffSidebar />
@@ -28,7 +28,7 @@ export function Layout() {
               <AdminSidebar />
             )}
           </div>
-          <main className="mt-3 ms-3">
+          <main className="mt-3 ml-3 flex-1">
             <Outlet />
           </main>
         </div>

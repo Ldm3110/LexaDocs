@@ -39,15 +39,15 @@ export function AuthForm({ type }: TestAuthType) {
 
   return (
     <form
-      className="d-flex flex-column gap-2"
+      className="flex flex-col mb-3"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="text-center">
-        <label className="form-label text-center">
+        <label className="block text-gray-800">
           {type == "staff" ? "username" : "email"}
         </label>
         <input
-          className="form-control text-center"
+          className="mt-2 form-input block w-full rounded-xl border border-gray-300 p-2 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
           {...register("username", { required: "Username is required" })}
         />
         {errors.username && (
@@ -56,10 +56,10 @@ export function AuthForm({ type }: TestAuthType) {
           </div>
         )}
       </div>
-      <div className="text-center">
+      <div className="text-center mt-3">
         <label className="form-label text-center">Password</label>
         <input
-          className="form-control text-center"
+          className="mt-2 form-input block w-full rounded-xl border border-gray-300 p-2 text-center focus:ring-2 focus:ring-blue-500 focus:outline-none"
           type="password"
           {...register("password", { required: "Password is required" })}
         />
@@ -70,7 +70,7 @@ export function AuthForm({ type }: TestAuthType) {
         )}
       </div>
 
-      <input className="mt-5 btn btn-success" type="submit" />
+      <button type="submit" className="mt-5 rounded-xl bg-green-700 text-white p-2 hover:bg-green-600 cursor-pointer">Submit</button>
       {errors.root && (
         <div className="text-danger fst-italic mt-2">
           <strong>{errors.root.message}</strong>

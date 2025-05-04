@@ -9,16 +9,16 @@ function Auth({ type }: AuthType) {
 
   return (
     <>
-      <div className="d-flex justify-content-center align-items-center vh-100">
+      <div className="flex h-screen items-center justify-center">
         <div
-          className="text-black text-center p-4 rounded-5 shadow-lg"
+          className="w-[350px] rounded-xl bg-white p-5 text-center text-black shadow-lg"
           style={{ width: "350px" }}
         >
-          <h2>
+          <h2 className="text-2xl font-bold">
             <strong>Lexadocs</strong>
           </h2>
-          <h5 className="mb-5 fst-italic">{typeLabel}</h5>
-          <div className="d-flex flex-column mb-3">
+          <h5 className="mb-5 text-gray-600 italic">{typeLabel}</h5>
+          <div className="mb-3 flex flex-col">
             <AuthForm type={type} />
           </div>
         </div>

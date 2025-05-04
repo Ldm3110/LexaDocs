@@ -19,17 +19,15 @@ export function Navbar() {
   };
 
   return (
-    <nav
-      className="navbar navbar-light d-flex justify-content-between"
-      style={{ backgroundColor: "#e3f2fd" }}
-    >
+    <nav className="flex justify-between items-center p-4" style={{ backgroundColor: "#e3f2fd" }}>
       <img
-        className="ms-3"
+        className="ml-3 cursor-pointer"
         src="/logo/lexadoc.svg"
         alt="LEGALL-logo"
         style={styleLogo}
         onClick={() => navigate("/dashboard")}
       />
+      {/* dropdown with bootstrap */}
       <div className="dropdown me-3">
         <button
           className="btn btn-secondary dropdown-toggle"
